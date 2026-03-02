@@ -1,0 +1,7 @@
+variables:
+  catalog_name:
+    description: The name of the default UC Catalog
+  schema_name:
+    description: The name of UC Schema to hold the config for the table maintenance process
+  environment:
+    description: The environment to which this asset bundle is being deployed

@@ -1,0 +1,81 @@
+resources:
+  jobs:
+    etl_meta_demo_pipeline:
+      name: "ETL meta transformation demo pipeline"
+      tags:
+        owner: "Anupam Chand"
+        purpose: "etl meta transformation demo"
+        env: ${var.environment}
+      
+      parameters:
+        - name: jobid
+          default: '{{job.id}}'
+        - name: jobname
+          default: '{{job.name}}'
+        - name: jobrunid
+          default: '{{job.run_id}}'
+        - name: etl_date
+          default: '2022-10-20'
+        
+      tasks:
+        - task_key: bronze_load
+          notebook_task:
+            notebook_path: ../src/etl_meta_transformation.py   # Use .ipynb
+            base_parameters:
+              #schema_name: ${var.schema_name}
+              interface: AUTOLOAD1
+              target_layer: bronze
+              config_table: ${var.catalog_name}.${var.schema_name}.etl_meta_config
+              parms_ovrd: ""
+              taskname: '{{task.name}}'
+              taskrunid: '{{task.run_id}}'
+              log_tbl_load_status: Y
+              logging_level: INFO
+
+        - task_key: silver_load
+          notebook_task:
+            notebook_path: ../src/etl_meta_transformation.py   # Use .ipynb
+            base_parameters:
+              #schema_name: ${var.schema_name}
+              interface: SILVERLOAD1
+              target_layer: silver
+              config_table: ${var.catalog_name}.${var.schema_name}.etl_meta_config
+              parms_ovrd: ""
+              taskname: '{{task.name}}'
+              taskrunid: '{{task.run_id}}'
+              log_tbl_load_status: Y
+              logging_level: INFO
+
+        - task_key: gold_load
+          depends_on:
+            - task_key: silver_load
+          notebook_task:
+            notebook_path: ../src/etl_meta_transformation.py   # Use .ipynb
+            base_parameters:
+              #schema_name: ${var.schema_name}
+              interface: GOLDLOAD1
+              target_layer: gold
+              config_table: ${var.catalog_name}.${var.schema_name}.etl_meta_config
+              parms_ovrd: ""
+              taskname: '{{task.name}}'        
+              taskrunid: '{{task.run_id}}'
+              log_tbl_load_status: Y
+              logging_level: INFO
+
+        - task_key: gold_load2
+          depends_on:
+            - task_key: silver_load
+          notebook_task:
+            notebook_path: ../src/etl_meta_transformation.py   # Use .ipynb
+            base_parameters:
+              #schema_name: ${var.schema_name}
+              interface: NOTEBOOK2
+              target_layer: gold
+              config_table: ${var.catalog_name}.${var.schema_name}.etl_meta_config
+              parms_ovrd: ""
+              taskname: '{{task.name}}'        
+              taskrunid: '{{task.run_id}}'
+              log_tbl_load_status: Y
+              logging_level: INFO
+
+      max_concurrent_runs: 1

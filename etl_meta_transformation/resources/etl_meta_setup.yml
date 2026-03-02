@@ -1,0 +1,39 @@
+resources:
+  jobs:
+    wf_meta_setup_job:
+      name: 'ETL meta transformation setup job'      
+      tags:
+        owner: "Anupam Chand"
+        purpose: "etl meta transformation"
+        env: ${var.environment}
+      parameters:
+        - name: load_demo_data
+          default: 'N'
+
+
+      tasks:
+        - task_key: config_setup
+          notebook_task:
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${var.schema_name}
+            notebook_path: ../src/setupnotebook.ipynb
+
+        - task_key: condition_task
+          depends_on:
+            - task_key: config_setup
+          condition_task:
+            op: EQUAL_TO
+            left: "{{job.parameters.load_demo_data}}"
+            right: 'Y'
+
+        - task_key: load_demo_data
+          depends_on:
+            - task_key: condition_task
+              outcome: 'true'
+          notebook_task:
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${var.schema_name}
+            notebook_path: ../demo/loaddemodata.ipynb
+      max_concurrent_runs: 1

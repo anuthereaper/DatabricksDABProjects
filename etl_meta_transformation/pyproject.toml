@@ -1,0 +1,19 @@
+# pyproject.toml (at repo-root or bundles/bundle-a)
+[project]
+name = "etl_meta_transformation"
+version = "0.0.1"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]   # Tell setuptools where your packages live
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+    "databricks-labs-pytester"
+]
+
+integration-tests = [
+    "databricks-connect==16.0.0"
+]

@@ -1,0 +1,17 @@
+silverload = """
+
+INSERT INTO dev_etl.silver.test (dst_id, dst_name, dst_age, dst_country, dst_email, dst_load_date)
+SELECT 
+  test_id,
+  test_name,
+  test_age,
+  COALESCE(NULLIF(test_country, ''), 'DF') AS dst_country,
+  test_email,
+  test_load_date
+FROM dev_etl.bronze.test WHERE test_load_date = '{etl_date}';
+"""
+
+goldload = """
+INSERT INTO dev_etl.gold.test (dgt_country, dgt_count)
+SELECT dst_country, COUNT(*) FROM dev.silver.test WHERE dst_load_date = '{etl_date}' GROUP BY dst_country ;
+"""

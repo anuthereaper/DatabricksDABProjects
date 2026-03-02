@@ -1,0 +1,46 @@
+# This is a Databricks asset bundle definition for mydab_proj_template.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: etl-meta-transformation-dab-proj
+
+include:
+  - resources/*.yml
+  #- tests/*
+  #- src/*
+  #- requirements.txt
+  #- resources/*/*.yml
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    # Uncomment this if you run outside of Free Edition
+    # mode: development
+    default: true
+    workspace:
+      host: dbc-9f02badd-3b21.cloud.databricks.com
+      profile: devfree
+      # root_path: /Workspace/Users/anupamchand@gmail.com/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/Users/anupamchand@gmail.com/mybundle/${bundle.name}/${bundle.target}
+    variables:
+      environment: dev
+      catalog_name: dev_etl
+      schema_name: etl_meta
+
+
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-560023734609075.15.azuredatabricks.net
+      profile: oauth
+      # We explicitly deploy to /Workspace/Users/a.chand@shell.com to make sure we only have a single copy.
+      root_path: /Workspace/Users/a.chand@shell.com/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - user_name: a.chand@shell.com
+        level: CAN_MANAGE
+    variables:
+      environment: prod
+      catalog_name: prod
+      schema_name: etl_meta

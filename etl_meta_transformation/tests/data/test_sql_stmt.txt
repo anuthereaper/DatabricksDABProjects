@@ -1,0 +1,15 @@
+sql1 = """
+SELECT * from test_table;
+"""
+
+sql2 = """
+SELECT * from test_table;
+"""
+
+sql3 = """
+SELECT * from test_table;
+"""
+
+sql4 = """
+SELECT * from test_table;
+"""

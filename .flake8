@@ -1,0 +1,4 @@
+[flake8]
+doctests = True
+max-line-length = 400
+extend-ignore = E203

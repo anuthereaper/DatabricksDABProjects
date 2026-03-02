@@ -1,0 +1,18 @@
+resources:
+  jobs:
+    tablemaint_setup-job:
+      name: 'Table maintenance setup job'      
+      tags:
+        owner: "Anupam Chand"
+        purpose: "Table maintenance"
+        env: ${var.environment}
+
+
+      tasks:
+        - task_key: config_setup
+          notebook_task:
+            base_parameters:
+              catalog_name: ${var.catalog_name}
+              schema_name: ${var.schema_name}
+            notebook_path: ../src/setupnotebook.ipynb
+      max_concurrent_runs: 1
